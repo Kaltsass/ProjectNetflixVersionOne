@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies Page</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Global styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            color: #ff6f61;
+            margin-bottom: 20px;
+        }
+
+        button {
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #d55c4b;
+        }
+
+        /* Container for movie grid */
+        #movies-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            padding: 0 10px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        /* Movie card styles */
+        .movie {
+            background-color: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .movie img {
+            width: 100%;
+            height: auto;
+            border-bottom: 2px solid #444;
+        }
+
+        .movie h3 {
+            font-size: 1.1em;
+            margin: 10px 0;
+            color: #ff6f61;
+        }
+
+        .movie p {
+            font-size: 1em;
+            color: #bbb;
+            margin-bottom: 10px;
+        }
+
+        /* Hover effect for movie cards */
+        .movie:hover {
+            transform: translateY(-10px);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to the Movies Page</h1>
+    <div id="movies-container"></div>
+    <button onclick="location.href='index.html'">Back to Home</button>
+
+    <script>
+        const apiKey = '6abe83b69fe5c4ef29cefc2512643151'; // Your API key
+        const moviesContainer = document.getElementById('movies-container');
+    
+        async function fetchImdbId(movieId) {
+            try {
+                const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}/external_ids?api_key=${apiKey}`);
+                const data = await response.json();
+                return data.imdb_id;
+            } catch (error) {
+                console.error('Error fetching IMDb ID:', error);
+                return null;
+            }
+        }
+    
+        async function fetchPopularMovies() {
+            try {
+                // Fetching popular movies
+                const response = await fetch(`https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&language=en-US&page=1`);
+                const data = await response.json();
+                const movies = data.results;
+                displayMovies(movies);
+            } catch (error) {
+                console.error('Error fetching popular movies:', error);
+            }
+        }
+    
+        async function fetchSpecificMovie(movieId) {
+            try {
+                // Fetching a specific movie (e.g., Interstellar)
+                const response = await fetch(`https://api.themoviedb.org/3/movie/${movieId}?api_key=${apiKey}&language=en-US`);
+                const movie = await response.json();
+                displayMovie(movie);
+            } catch (error) {
+                console.error('Error fetching specific movie:', error);
+            }
+        }
+    
+        async function displayMovies(movies) {
+            moviesContainer.innerHTML = ''; // Clear existing content
+            for (const movie of movies) {
+                const imdbId = await fetchImdbId(movie.id); // Fetch IMDb ID for each movie
+                const imdbUrl = imdbId ? `https://www.imdb.com/title/${imdbId}/` : '#';
+    
+                const movieDiv = document.createElement('div');
+                movieDiv.className = 'movie';
+                movieDiv.innerHTML = `
+                    <a href="${imdbUrl}" target="_blank">
+                        <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
+                    </a>
+                    <h3>${movie.title}</h3>
+                    <p>Rating: ${movie.vote_average}</p>
+                `;
+                moviesContainer.appendChild(movieDiv);
+            }
+        }
+    
+        async function displayMovie(movie) {
+            const imdbId = await fetchImdbId(movie.id); // Fetch IMDb ID for the movie
+            const imdbUrl = imdbId ? `https://www.imdb.com/title/${imdbId}/` : '#';
+    
+            const movieDiv = document.createElement('div');
+            movieDiv.className = 'movie';
+            movieDiv.innerHTML = `
+                <a href="${imdbUrl}" target="_blank">
+                    <img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
+                </a>
+                <h3>${movie.title}</h3>
+                <p>Rating: ${movie.vote_average}</p>
+            `;
+            moviesContainer.appendChild(movieDiv);
+        }
+    
+        // Fetch popular movies and Interstellar
+        fetchPopularMovies();
+        fetchSpecificMovie(157336); // Fetch Interstellar using its movie ID
+    </script>
+    
+    
+    
+    
+
+</body>
+</html>

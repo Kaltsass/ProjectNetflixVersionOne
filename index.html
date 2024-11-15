@@ -1,31 +1,113 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title >Netflix Website Clone</title>
     <link rel="stylesheet" href="style.css">
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-analytics.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
+
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDEJbJ79LCv1b6p46b4qZ2-dyulBmBHmaU",
+            authDomain: "projectnetflixversionone.firebaseapp.com",
+            projectId: "projectnetflixversionone",
+            storageBucket: "projectnetflixversionone.firebasestorage.app",
+            messagingSenderId: "899224091278",
+            appId: "1:899224091278:web:2fcb15b065c81b1c0ba7df",
+            measurementId: "G-7PC4X335H9"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth(app);
+
+        // Function to show the sign-in modal
+        function showModal() {
+            document.getElementById('sign-in-modal').style.display = 'block';
+        }
+
+        // Function to close the sign-in modal
+        function closeModal() {
+            document.getElementById('sign-in-modal').style.display = 'none';
+        }
+
+        // Function to handle sign-in form submission
+        async function handleSignIn(event) {
+            event.preventDefault(); // Prevent the form from submitting the traditional way
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                // Signed in
+                alert('Sign-in successful!');
+                closeModal(); // Close the modal on successful sign-in
+            } catch (error) {
+                console.error('Error during sign-in:', error);
+                alert(error.message); // Show error message to user
+            }
+        }
+
+        // Add event listeners after the DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('signInBtn').addEventListener('click', showModal);
+            document.querySelector('.close').addEventListener('click', closeModal);
+        });
+    </script>
 </head>
 <body>
 
-<div class="header">
-    <nav>
-        <img src="images/logo.png" class="logo">
-        <div>
-            <button class="language-btn">English <img src="images/down-icon.png"></button>
-            <button>Sign In</button>
+    <div class="header">
+        <nav>
+            <div class="logo-container"> <!-- New container for logo and button -->
+                <img src="images/logo.png" class="logo">
+                <button class="redirect-btn" onclick="location.href='moviesPage.html'">Movies</button> <!-- New button -->
+            </div>
+            <div>
+                <button class="language-btn">English <img src="images/down-icon.png"></button>
+                <button id="signInBtn">Sign In</button>
+            </div>
+        </nav>
+        <div class="header-content">
+            <h1> Unlimited movies, TV shows, and more.</h1>
+            <h3>Watch anywhere. Cancel anytime</h3>
+            <p>Ready to watch? Enter your email to create or restart your membership</p>
+            <form class="email-signup">
+                <input type="email" placeholder="Email address" required>
+                <button type="submit">Get Started</button>
+            </form>
         </div>
-    </nav>
-    <div class="header-content">
-        <h1> Unlimited movies,TV shows and more.</h1>
-        <h3>Watch anywhere. Cancel anytime</h3>
-        <p>Ready to watch? Enter your email to create or restart your membership</p>
-        <form class="email-signup">
-            <input type="email"placeholder="Email address" required>
-            <button type="submit">Get Started</button>
-        </form>
     </div>
 
-</div>
+    <!-- Modal for Sign In -->
+    <div id="sign-in-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Sign In</h2>
+            <form id="sign-in-form" onsubmit="handleSignIn(event)">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Enter your email" required />
+                
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required />
+                
+                <button type="submit">Sign In</button>
+            </form>
+            
+            <!-- Forgot password link -->
+            <a href="#" class="forgot-password">Forgot Password?</a>
+        </div>
+    </div>
+    
+    
+    
 
 <div class="features">
     <div class="row">
@@ -75,42 +157,80 @@
             <input type="radio" name="accordion" id="first">
             <label for="first">What is Netflix?</label>
             <div class="content">
-                <p>1231232132131313131</p>
+                <p>Netflix is a streaming service that offers a wide variety of television shows, movies, documentaries, and original programming across various genres. Founded in 1997, it initially started as a DVD rental service but shifted to streaming in 2007. 
+
+                    Today, Netflix is known for producing original content, including popular series like *Stranger Things*, *The Crown*, and *The Witcher*, as well as films and documentaries. Subscribers can watch content on-demand from various devices, such as smart TVs, computers, tablets, and smartphones, typically for a monthly subscription fee. Netflix operates globally, although the availability of certain content may vary by region due to licensing agreements.</p>
             </div>
         </li>
         <li>
             <input type="radio" name="accordion" id="second">
             <label for="second">How much does Netflix cost?</label>
             <div class="content">
-                <p>1231232132131313131</p>
+                <p>As of November 2024, Netflix offers several subscription plans with different pricing tiers. Here are the typical options:
+
+                    1. **Basic Plan**: This plan usually costs around $8.99 per month. It allows streaming on one device at a time and does not include HD or Ultra HD content.
+                    
+                    2. **Standard Plan**: Priced at approximately $15.49 per month, this plan allows streaming on two devices simultaneously and includes HD content.
+                    
+                    3. **Premium Plan**: This plan is about $19.99 per month and allows streaming on up to four devices at once, including access to Ultra HD content.
+                    
+                    Prices may vary based on your location and any recent changes Netflix may implement. It's always a good idea to check Netflix's official website for the most current pricing and available plans.</p>
             </div>
         </li>
         <li>
             <input type="radio" name="accordion" id="third">
             <label for="third">Where can I watch Netflix?</label>
             <div class="content">
-                <p>1231232132131313131</p>
+                <p>You can watch Netflix on a variety of devices, including:
+
+                    1. **Smart TVs**: Most modern smart TVs come with the Netflix app pre-installed or available for download.
+                    
+                    2. **Streaming Devices**: Devices such as Roku, Amazon Fire TV Stick, Apple TV, Chromecast, and Google Nest can stream Netflix.
+                    
+                    3. **Game Consoles**: You can access Netflix on consoles like PlayStation (PS4, PS5) and Xbox (Xbox One, Xbox Series X/S).
+                    
+                    4. **Computers**: Netflix is accessible through web browsers on both Windows and macOS computers by visiting the Netflix website.
+                    
+                    5. **Tablets and Smartphones**: The Netflix app is available for download on iOS and Android devices from their respective app stores.
+                    
+                    6. **Blu-ray Players**: Some Blu-ray players have the Netflix app built-in.
+                    
+                    7. **Set-top Boxes**: Many cable or satellite service providers offer set-top boxes that include the Netflix app.
+                    
+                    Make sure you have a stable internet connection for optimal streaming quality, regardless of the device you choose.</p>
             </div>
         </li>
         <li>
             <input type="radio" name="accordion" id="fourth">
             <label for="fourth">How do I cancel?</label>
             <div class="content">
-                <p>1231232132131313131</p>
+                <p>To cancel your Netflix subscription, follow these steps:
+
+                    1. **Log In**: Go to the Netflix website or open the Netflix app and log into your account.
+                    
+                    2. **Account Settings**: Click on your profile icon in the upper right corner and select "Account" from the dropdown menu.
+                    
+                    3. **Membership & Billing**: Under the "Membership & Billing" section, you'll see your current subscription plan and billing details.
+                    
+                    4. **Cancel Membership**: Click on "Cancel Membership." Follow the prompts to confirm your cancellation.
+                    
+                    5. **Confirmation**: After completing the cancellation process, you'll receive a confirmation email from Netflix.
+                    
+                    Remember, you can continue to watch Netflix until the end of your billing cycle after cancellation. If you decide to return, you can reactivate your account at any time without losing your previous viewing history.</p>
             </div>
         </li>
         <li>
             <input type="radio" name="accordion" id="fifth">
             <label for="fifth">What can I watch on Netflix?</label>
             <div class="content">
-                <p>1231232132131313131</p>
+                <p>On Netflix, you can watch a wide range of content, including popular series like *Stranger Things* and *The Crown*, movies, documentaries, stand-up specials, and animated shows. The library includes various genres such as drama, comedy, thriller, horror, and family-friendly options. Netflix also produces a variety of original content exclusive to its platform.</p>
             </div>
         </li>
         <li>
             <input type="radio" name="accordion" id="sixth">
             <label for="sixth">Is Netflix good for kids?</label>
             <div class="content">
-                <p>1231232132131313131</p>
+                <p>Yes, Netflix can be a good option for kids, as it offers a wide variety of family-friendly content, including animated series, movies, and educational programming. The platform also features a dedicated Kids profile, which provides access to age-appropriate shows and movies, along with parental controls that allow parents to restrict content based on ratings. This helps ensure a safer viewing experience for children. However, parental guidance is still recommended to ensure the content aligns with individual family values and preferences.</p>
             </div>
         </li>
     </ul>
@@ -126,31 +246,39 @@
 
     <div class="row">
         <div class="col">
-            <a href="#">FAQ</a>
-            <a href="#">Investor Relations</a>
-            <a href="#">Privacy</a>
-            <a href="#">Speed Test</a>
+            <a href="https://help.netflix.com/en/node/412">FAQ</a>
+            
+            <a href="https://help.netflix.com/legal/privacy">Privacy</a>
+            
         </div>
         <div class="col">
-            <a href="#">Help Center</a>
-            <a href="#">Jobs</a>
-            <a href="#">Cookies Preferences</a>
-            <a href="#">Legal Notices</a>
+            <a href="https://help.netflix.com/en">Help Center</a>
+            
+            <a href="https://help.netflix.com/en/node/24852">Legal Notices</a>
         </div>
         <div class="col">
-            <a href="#">Account</a>
-            <a href="#">Ways to watch</a>
-            <a href="#">Corporate Information</a>
-            <a href="#">Only on Netflix</a>
+            <a href="https://www.netflix.com/login?nextpage=https%3A%2F%2Fwww.netflix.com%2Fyouraccount">Account</a>
+            
+            <a href="https://help.netflix.com/en/node/134094">Corporate Information</a>
+            
         </div>
         <div class="col">
-            <a href="#">Media Center</a>
-            <a href="#">Terms Of Use</a>
-            <a href="#">Contact Us</a>
+            <a href="https://media.netflix.com/en/">Media Center</a>
+            <a href="https://help.netflix.com/legal/termsofuse">Terms Of Use</a>
+            <a href="https://help.netflix.com/en/contactus">Contact Us</a>
         </div>
     </div>
-    <button class="language-btn">English <img src="images/down-icon.png"></button>
-    <p class="copyright-txt">Netflix Paokara</p>
+    <div> <!--Language button in the bottom-->
+        
+        <button class="language-btn" id="languageBtn">English <img src="images/down-icon.png" alt="dropdown icon"></button>
+        <p class="copyright-txt">Netflix Paokara</p>
+    </div>
+    
 </div>
+
+
+
+<script src="C:\Users\lange\vscode_project\ProjectNetflixVersionOne\script.js"></script> 
+
 </body>
 </html>
