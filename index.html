@@ -1,88 +1,149 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title >Netflix Website Clone</title>
+    <title>Netflix Website Clone</title>
     <link rel="stylesheet" href="style.css">
     <script type="module">
-        // Import Firebase SDKs
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-analytics.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js";
-
-        // Your Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDEJbJ79LCv1b6p46b4qZ2-dyulBmBHmaU",
-            authDomain: "projectnetflixversionone.firebaseapp.com",
-            projectId: "projectnetflixversionone",
-            storageBucket: "projectnetflixversionone.firebasestorage.app",
-            messagingSenderId: "899224091278",
-            appId: "1:899224091278:web:2fcb15b065c81b1c0ba7df",
-            measurementId: "G-7PC4X335H9"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const auth = getAuth(app);
-
         // Function to show the sign-in modal
         function showModal() {
             document.getElementById('sign-in-modal').style.display = 'block';
         }
-
+    
         // Function to close the sign-in modal
         function closeModal() {
             document.getElementById('sign-in-modal').style.display = 'none';
         }
-
+    
         // Function to handle sign-in form submission
-        async function handleSignIn(event) {
-            event.preventDefault(); // Prevent the form from submitting the traditional way
-
+        function handleSignIn(event) {
+            event.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                // Signed in
+    
+            if (email && password) {
                 alert('Sign-in successful!');
-                closeModal(); // Close the modal on successful sign-in
-            } catch (error) {
-                console.error('Error during sign-in:', error);
-                alert(error.message); // Show error message to user
+                updateSignInButton(email);
+                closeModal();
+            } else {
+                alert('Please provide both email and password.');
             }
         }
-
+    
+        // Function to update the "Sign In" button to "Account"
+        function updateSignInButton(userEmail) {
+            const signInBtn = document.getElementById('signInBtn');
+            signInBtn.textContent = 'Account'; // Change button text to "Account"
+            signInBtn.removeEventListener('click', showModal); // Remove old listener
+            signInBtn.addEventListener('click', toggleAccountMenu); // Add new listener for account menu
+            createAccountMenu(userEmail); // Create the account menu
+        }
+    
+        // Function to create the account dropdown menu
+        function createAccountMenu(userEmail) {
+            const existingMenu = document.getElementById('account-menu');
+            if (existingMenu) return; // Prevent multiple menus
+    
+            const accountMenu = document.createElement('div');
+            accountMenu.id = 'account-menu';
+            accountMenu.className = 'account-menu hidden';
+            accountMenu.innerHTML = `
+                <p class="welcome-msg">Welcome, ${userEmail}</p>
+                <ul>
+                    <li onclick="viewProfile()">Profile</li>
+                    <li onclick="openSettings()">Settings</li>
+                    <li onclick="logOut()">Log Out</li>
+                </ul>
+            `;
+            document.body.appendChild(accountMenu);
+        }
+    
+        // Function to toggle the account menu visibility
+        function toggleAccountMenu() {
+            const accountMenu = document.getElementById('account-menu');
+            if (accountMenu) {
+                accountMenu.classList.toggle('hidden'); // Toggle menu visibility
+            }
+        }
+    
+        // Menu item handlers
+        function viewProfile() {
+            alert('Redirecting to your profile page...');
+        }
+    
+        function openSettings() {
+            alert('Opening settings...');
+        }
+    
+        function logOut() {
+            alert('Logging out...');
+    
+            // Remove account menu if it exists
+            const accountMenu = document.getElementById('account-menu');
+            if (accountMenu) {
+                accountMenu.remove(); // Remove the account menu
+            }
+    
+            // Reset the "Sign In" button text and functionality
+            const signInBtn = document.getElementById('signInBtn');
+            signInBtn.textContent = 'Sign In'; // Reset button text to "Sign In"
+            signInBtn.removeEventListener('click', toggleAccountMenu); // Remove the toggle listener
+            signInBtn.addEventListener('click', showModal); // Add back the original listener for the modal
+        }
+    
         // Add event listeners after the DOM is loaded
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('signInBtn').addEventListener('click', showModal);
-            document.querySelector('.close').addEventListener('click', closeModal);
+            const signInBtn = document.getElementById('signInBtn');
+            signInBtn.addEventListener('click', showModal); // Open modal when "Sign In" button is clicked
+            document.querySelector('.close').addEventListener('click', closeModal); // Close modal when close button is clicked
+            document.getElementById('sign-in-form').addEventListener('submit', handleSignIn); // Handle form submission
         });
     </script>
+    
+    
+
+    
+    
 </head>
 <body>
 
     <div class="header">
         <nav>
-            <div class="logo-container"> <!-- New container for logo and button -->
+            <div class="logo-container">
                 <img src="images/logo.png" class="logo">
-                <button class="redirect-btn" onclick="location.href='moviesPage.html'">Movies</button> <!-- New button -->
+                <button class="redirect-btn" onclick="location.href='moviesPage.html'">Movies</button>
+                <button class="redirect-btn" onclick="location.href='tvSeriesPage.html'">TV Shows</button>
             </div>
             <div>
-                <button class="language-btn">English <img src="images/down-icon.png"></button>
+                <!-- Language Dropdown -->
+                <div class="language-dropdown">
+                    <button class="language-btn" id="languageBtn">English <img src="images/down-icon.png" alt="dropdown icon"></button>
+                    <div class="dropdown-content hidden" id="languageMenu">
+                        <a href="#">English</a>
+                        <a href="#">Español</a>
+                        <a href="#">Français</a>
+                        <a href="#">Deutsch</a>
+                        <a href="#">Português</a>
+                    </div>
+                </div>
                 <button id="signInBtn">Sign In</button>
             </div>
         </nav>
+        
+        <!-- Header Content (Text to be translated) -->
         <div class="header-content">
-            <h1> Unlimited movies, TV shows, and more.</h1>
-            <h3>Watch anywhere. Cancel anytime</h3>
-            <p>Ready to watch? Enter your email to create or restart your membership</p>
-            <form class="email-signup">
-                <input type="email" placeholder="Email address" required>
+            <h1>Unlimited movies, TV shows, and more.</h1>
+            <h3>Watch anywhere. Cancel anytime.</h3>
+            <p>Ready to watch? Enter your email to create or restart your membership.</p>
+            <!-- Your Email Signup Form -->
+            <form class="email-signup" id="email-signup">
+                <input type="email" id="email-address" placeholder="Email address" required>
                 <button type="submit">Get Started</button>
             </form>
+
+            <!-- Success Message -->
+            <div id="success-message" style="display:none;">Success! You've signed up.</div>
         </div>
     </div>
 
@@ -105,7 +166,167 @@
             <a href="#" class="forgot-password">Forgot Password?</a>
         </div>
     </div>
+
+    <!-- Script to handle the language translation -->
+    <script>
+        // Translation dictionary
+        const translations = {
+            deutsch: {
+                headerTitle: "Unbegrenzte Filme, TV-Shows und mehr.",
+                headerSubtitle: "Überall ansehen. Jederzeit kündigen.",
+                headerDescription: "Bereit zum Anschauen? Geben Sie Ihre E-Mail-Adresse ein, um Ihre Mitgliedschaft zu erstellen oder fortzusetzen.",
+                features: [
+                    "Genießen Sie es auf Ihrem Fernseher.",
+                    "Laden Sie Ihre Shows herunter, um sie offline anzusehen.",
+                    "Überall ansehen.",
+                    "Erstellen Sie Profile für Kinder."
+                ],
+                faq: {
+                    title: "Häufig gestellte Fragen",
+                    whatIsNetflix: "Was ist Netflix?",
+                    cost: "Wie viel kostet Netflix?",
+                    watchWhere: "Wo kann ich Netflix ansehen?",
+                    cancel: "Wie kündige ich?",
+                    whatToWatch: "Was kann ich auf Netflix ansehen?",
+                    goodForKids: "Ist Netflix gut für Kinder?"
+                }
+            },
+            español: {
+                headerTitle: "Películas, series y mucho más, sin límites.",
+                headerSubtitle: "Mira donde quieras. Cancela cuando quieras.",
+                headerDescription: "¿Listo para mirar? Ingresa tu correo electrónico para crear o reiniciar tu membresía.",
+                features: [
+                    "Disfrútalo en tu TV.",
+                    "Descarga tus series para verlas sin conexión.",
+                    "Mira en todas partes.",
+                    "Crea perfiles para niños."
+                ],
+                faq: {
+                    title: "Preguntas frecuentes",
+                    whatIsNetflix: "¿Qué es Netflix?",
+                    cost: "¿Cuánto cuesta Netflix?",
+                    watchWhere: "¿Dónde puedo ver Netflix?",
+                    cancel: "¿Cómo cancelo?",
+                    whatToWatch: "¿Qué puedo ver en Netflix?",
+                    goodForKids: "¿Netflix es bueno para los niños?"
+                }
+            },
+            français: {
+                headerTitle: "Films, séries et bien plus, sans limites.",
+                headerSubtitle: "Regardez partout. Annulez à tout moment.",
+                headerDescription: "Prêt à regarder ? Entrez votre e-mail pour créer ou reprendre votre abonnement.",
+                features: [
+                    "Profitez-en sur votre TV.",
+                    "Téléchargez vos séries pour les regarder hors ligne.",
+                    "Regardez partout.",
+                    "Créez des profils pour les enfants."
+                ],
+                faq: {
+                    title: "Questions fréquemment posées",
+                    whatIsNetflix: "Qu'est-ce que Netflix ?",
+                    cost: "Combien coûte Netflix ?",
+                    watchWhere: "Où puis-je regarder Netflix ?",
+                    cancel: "Comment annuler ?",
+                    whatToWatch: "Que puis-je regarder sur Netflix ?",
+                    goodForKids: "Netflix est-il adapté aux enfants ?"
+                }
+            },
+            português: {
+                headerTitle: "Filmes, séries e muito mais, sem limites.",
+                headerSubtitle: "Assista onde quiser. Cancele quando quiser.",
+                headerDescription: "Pronto para assistir? Insira seu e-mail para criar ou reiniciar sua assinatura.",
+                features: [
+                    "Aproveite na sua TV.",
+                    "Baixe suas séries para assistir offline.",
+                    "Assista em qualquer lugar.",
+                    "Crie perfis para crianças."
+                ],
+                faq: {
+                    title: "Perguntas frequentes",
+                    whatIsNetflix: "O que é a Netflix?",
+                    cost: "Quanto custa a Netflix?",
+                    watchWhere: "Onde posso assistir à Netflix?",
+                    cancel: "Como cancelar?",
+                    whatToWatch: "O que posso assistir na Netflix?",
+                    goodForKids: "A Netflix é boa para crianças?"
+                }
+            },
+            english: {
+                headerTitle: "Unlimited movies, TV shows, and more.",
+                headerSubtitle: "Watch anywhere. Cancel anytime.",
+                headerDescription: "Ready to watch? Enter your email to create or restart your membership.",
+                features: [
+                    "Watch it on your TV.",
+                    "Download your shows to watch offline.",
+                    "Watch anywhere.",
+                    "Create profiles for kids."
+                ],
+                faq: {
+                    title: "Frequently Asked Questions",
+                    whatIsNetflix: "What is Netflix?",
+                    cost: "How much does Netflix cost?",
+                    watchWhere: "Where can I watch Netflix?",
+                    cancel: "How do I cancel?",
+                    whatToWatch: "What can I watch on Netflix?",
+                    goodForKids: "Is Netflix good for kids?"
+                }
+            }
+        };
     
+        // Function to translate the page
+        function translatePage(language) {
+            const lang = translations[language];
+            if (!lang) return; // Exit if no translations for the selected language
+        
+            // Update header
+            document.querySelector(".header-content h1").textContent = lang.headerTitle;
+            document.querySelector(".header-content h3").textContent = lang.headerSubtitle;
+            document.querySelector(".header-content p").textContent = lang.headerDescription;
+    
+            // Update features
+            const featureHeaders = document.querySelectorAll(".features .row .text-col h2");
+            const featureDescriptions = document.querySelectorAll(".features .row .text-col p");
+            featureHeaders.forEach((header, index) => {
+                header.textContent = lang.features[index];
+            });
+    
+            // Update FAQ
+            document.querySelector(".faq h2").textContent = lang.faq.title;
+        
+            // Update FAQ questions
+            const faqLabels = document.querySelectorAll(".accordion label");
+            faqLabels[0].textContent = lang.faq.whatIsNetflix;
+            faqLabels[1].textContent = lang.faq.cost;
+            faqLabels[2].textContent = lang.faq.watchWhere;
+            faqLabels[3].textContent = lang.faq.cancel;
+            faqLabels[4].textContent = lang.faq.whatToWatch;
+            faqLabels[5].textContent = lang.faq.goodForKids;
+        }
+        
+        // Event listeners for language options
+        document.querySelectorAll("#languageMenu a").forEach((link) => {
+            link.addEventListener("click", (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                const selectedLanguage = e.target.textContent.trim().toLowerCase(); // Normalize the language text to lowercase
+                translatePage(selectedLanguage);  // Translate based on normalized language
+                
+                // Update the displayed language on the button
+                document.getElementById("languageBtn").innerHTML = e.target.textContent + ' <img src="images/down-icon.png" alt="dropdown icon">';
+                
+                // Close the dropdown after selection
+                document.getElementById("languageMenu").classList.add("hidden");
+            });
+        });
+    
+        // Toggle the dropdown menu visibility
+        document.getElementById("languageBtn").addEventListener("click", () => {
+            const dropdown = document.getElementById("languageMenu");
+            dropdown.classList.toggle("hidden");
+        });
+    </script>
+    
+    
+    </div>
     
     
 
@@ -235,10 +456,15 @@
         </li>
     </ul>
     <small>Ready to watch? Enter your email to create or restart your membership.</small>
-    <form class="email-signup">
-        <input type="email"placeholder="Email address" required>
-        <button type="submit">Get Started</button>
-    </form>
+   <!-- Your Email Signup Form -->
+<form class="email-signup" id="email-signup">
+    <input type="email" id="email-address" placeholder="Email address" required>
+    <button type="submit">Get Started</button>
+</form>
+
+<!-- Success Message -->
+<div id="success-message" style="display:none;">Success! You've signed up.</div>
+    
 </div>
 
 <div class="footer">
@@ -268,9 +494,7 @@
             <a href="https://help.netflix.com/en/contactus">Contact Us</a>
         </div>
     </div>
-    <div> <!--Language button in the bottom-->
-        
-        <button class="language-btn" id="languageBtn">English <img src="images/down-icon.png" alt="dropdown icon"></button>
+
         <p class="copyright-txt">Netflix Paokara</p>
     </div>
     
@@ -279,6 +503,31 @@
 
 
 <script src="C:\Users\lange\vscode_project\ProjectNetflixVersionOne\script.js"></script> 
+<script>
+    // Handle form submission
+    document.getElementById('email-signup').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the form from submitting normally
+
+    // Get the email value
+    const email = document.getElementById('email-address').value;
+
+    // Check if the email is valid
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailPattern.test(email)) {
+        // Show the success message
+        document.getElementById('success-message').style.display = 'block';
+
+        // Optionally, store the email in LocalStorage (you can remove this if not needed)
+        localStorage.setItem('email', email);
+
+        // Reset the form
+        document.getElementById('email-signup').reset();
+    } else {
+        alert('Please enter a valid email address.');
+    }
+});
+   
+</script>
 
 </body>
 </html>
